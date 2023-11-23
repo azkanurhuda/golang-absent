@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: absent_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./initdb:/docker-entrypoint-initdb.d
+
+  server:
+    build: .
+    environment:
+      - SERVER_HOST=0.0.0.0
+      - SERVER_PORT=8888
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=absent_db
+      - JWT_SECRET=b5a636fc-bd01-41b1-9780-7bbd906fa4c0
+      - API_STACK_KEY=82938384hf20h1928484
+    ports:
+      - "8888:8888"
+    volumes:
+      - .:/go/src/app
+    depends_on:
+      - postgres
